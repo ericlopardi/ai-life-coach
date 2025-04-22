@@ -9,7 +9,7 @@ const app = express();
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
-    useUindexedTopology: true,
+    useUnifiedTopology: true,
   })
   .catch((err) => {
     console.error("Error occured attempting database connection", err);
