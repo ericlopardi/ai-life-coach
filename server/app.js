@@ -7,7 +7,7 @@ const { connectToMongoDB } = require("./resource/mongo.js");
 const app = express();
 
 // Connect to the database
-const mongoDB = connectToMongoDB().then(() => {
+connectToMongoDB().then(() => {
   console.log("Connected to MongoDB");
 }).catch((err) => {
   console.error("Error connecting to MongoDB:", err);
