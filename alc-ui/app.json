@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "alc-ui",
+    "scheme": "demo",
     "slug": "alc-ui",
     "version": "1.0.0",
     "orientation": "portrait",
