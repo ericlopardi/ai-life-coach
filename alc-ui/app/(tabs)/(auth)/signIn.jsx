@@ -8,16 +8,27 @@ export default function LoginScreen() {
 
   const validate = () => {
     const newErrors = {};
+    // Regular expression for validating email format
+    // This regex checks for a basic email format: local-part@domain
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[a-zA-Z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+
 
     if (!email) {
       newErrors.email = 'Email is required';
-    } else if (!emailRegex.test(email)) {
+    } 
+    
+    if (!emailRegex.test(email)) {
       newErrors.email = 'Invalid email format';
     }
 
     if (!password) {
       newErrors.password = 'Password is required';
+    }
+
+    if (!passwordRegex.test(password)) {
+      newErrors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
     }
 
     setErrors(newErrors);
