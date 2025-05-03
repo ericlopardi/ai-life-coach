@@ -8,10 +8,10 @@ export default function LoginScreen() {
 
   const validate = () => {
     const newErrors = {};
-    // Regular expression for validating email format
     // This regex checks for a basic email format: local-part@domain
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number
+    // This regex ensures Password must be at least 8 characters long, 
+    // contain at least one uppercase letter, one lowercase letter, and one number
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[a-zA-Z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
 
 
