@@ -4,3 +4,12 @@
 # Ignores all .env files
 *.env
 .env*
+
+# Ignores all .DS_Store files
+.DS_Store
+
+# Ignores all .idea directory
+.idea/
+
+# Ignores Documents directory
+Documents/
