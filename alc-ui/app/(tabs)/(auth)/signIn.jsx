@@ -5,7 +5,7 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
-
+// testing
   const validate = () => {
     const newErrors = {};
     // This regex checks for a basic email format: local-part@domain
