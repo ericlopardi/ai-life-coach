@@ -2,12 +2,12 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBlCxRiqINB8tTXsbk4IHnWL5TmLVT8kXg",
-  authDomain: "ai-life-coach-cf44a.firebaseapp.com",
-  projectId: "ai-life-coach-cf44a",
-  storageBucket: "ai-life-coach-cf44a.appspot.com", 
-  messagingSenderId: "690054798953",
-  appId: "1:690054798953:web:b670b100e80f22976e8cf8"
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJ_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET, 
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
