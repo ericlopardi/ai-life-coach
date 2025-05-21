@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function GoalsScreen() {
+export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text>goals root</Text>
+      <Text>home root</Text>
     </View>
   );
 }
