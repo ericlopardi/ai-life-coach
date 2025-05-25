@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../../lib/firebaseConfig';
 
 export default function SignUpScreen() {
    const [firstName, setFirstName] = useState('');
@@ -31,14 +33,33 @@ const validate = () => {
    else if (confirmPassword != password) newErrors.confirmPassword = 'Passwords do not match';
 
    setErrors(newErrors);
-
    return Object.keys(newErrors).length === 0;
 };
 
-const handleSignup = () => {
-   if (validate()) {
-       // TODO: Send sign up request to backend/firebase here
+const handleSignup = async () => {
+   if (!validate()) return; 
+   
+   try {
+       await createUserWithEmailAndPassword(auth, email.trim(), password);
        Alert.alert('Success', 'Account created!');
+       router.replace('(home)/home');
+   } catch (error) {
+    const newErrors = {};
+
+    // Firebase error handling
+    if (error.code === 'auth/email-already-in-use') {
+      newErrors.firebase = 'This email is already in use';
+    } else if (error.code === 'auth/invalid-email') {
+      newErrors.firebase = 'Invalid email address';
+    } else if (error.code === 'auth/weak-password') {
+      newErrors.firebase = 'Password is too weak. Please use a password that has at least 8 characters with one uppercase letter and a special character.';
+    } else if (error.code === 'auth/network-request-failed') {
+      newErrors.firebase = 'Network error. Please check your connection.';
+    } else {
+      newErrors.firebase = 'Something went wrong. Please try again.';
+    }
+    
+    setErrors(newErrors);
    }
 };
 
@@ -57,6 +78,7 @@ return (
          placeholder="First Name"
          value={firstName}
          onChangeText={setFirstName}
+         autoCapitalize='words'
        />
        {errors.firstName && <Text style={styles.error}>{errors.firstName}</Text>}
 
@@ -100,6 +122,10 @@ return (
        <TouchableOpacity style={styles.button} onPress={handleSignup}>
          <Text style={styles.buttonText}>Create Account</Text>
        </TouchableOpacity>
+
+      {errors.firebase && (
+        <Text style={styles.error}>{errors.firebase}</Text>
+      )}
 
        <Text style={styles.signinText}>
          Already have an account? {' '}
