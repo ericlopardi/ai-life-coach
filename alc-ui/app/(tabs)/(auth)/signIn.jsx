@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../../lib/firebaseConfig'; 
 
 export default function LoginScreen() {
  const [email, setEmail] = useState('');
@@ -34,18 +36,37 @@ export default function LoginScreen() {
    }
 
    setErrors(newErrors);
-
    return Object.keys(newErrors).length === 0;
  };
 
- const handleLogin = () => {
-   if (validate()) {
-     // TODO: Here you would typically send the email and password to your backend for authentication
-     // Replacing with a simple alert for demonstration purposes
-     // Proceed with login
-     Alert.alert('Success', 'Logging in...');
-   }
- };
+ const handleLogin = async () => {
+  if (!validate()) return;
+
+  try {
+    await signInWithEmailAndPassword(auth, email.trim(), password);
+    Alert.alert('Success', 'Logged in!');
+    router.replace('(home)/home');
+  } catch (error) {
+    console.log('Firebase error:', error.code);
+    const newErrors = {};
+
+    if (error.code === 'auth/invalid-credential') {
+      newErrors.firebase = 'Invalid email or password';
+    } else if (error.code === 'auth/user-not-found') {
+      newErrors.firebase === 'User not found';
+    } else if (error.code === 'auth/wrong-password') {
+      newErrors.firebase === 'Invalid password';
+    } else if (error.code === 'auth/invalid-email') {
+      newErrors.email = 'Invalid email address';
+    } else if (error.code === 'auth/network-request-failed') {
+      newErrors.firebase = 'Network error. Please try again.';
+    } else {
+      newErrors.firebase = 'Something went wrong. Please try again.'
+    }
+
+    setErrors(newErrors);
+  }
+};
 
  return (
    <View style={styles.container}>
@@ -76,6 +97,8 @@ export default function LoginScreen() {
        <TouchableOpacity style={styles.button} onPress={handleLogin}>
          <Text style={styles.buttonText}>Log in</Text>
        </TouchableOpacity>
+
+      {errors.firebase && <Text style={styles.error}>{errors.firebase}</Text>}
 
        <Text style={styles.signupText}>
          Don't have an account?{' '}
