@@ -50,12 +50,12 @@ export default function LoginScreen() {
     console.log('Firebase error:', error.code);
     const newErrors = {};
 
-    if (
-      error.code === 'auth/user-not-found' ||
-      error.code === 'auth/wrong-password' ||
-      error.code === 'auth/invalid-credential'
-    ) {
+    if (error.code === 'auth/invalid-credential') {
       newErrors.firebase = 'Invalid email or password';
+    } else if (error.code === 'auth/user-not-found') {
+      newErrors.firebase === 'User not found';
+    } else if (error.code === 'auth/wrong-password') {
+      newErrors.firebase === 'Invalid password';
     } else if (error.code === 'auth/invalid-email') {
       newErrors.email = 'Invalid email address';
     } else if (error.code === 'auth/network-request-failed') {
