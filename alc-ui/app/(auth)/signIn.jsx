@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../lib/firebaseConfig'; 
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../lib/firebaseConfig'; 
+import { AuthContext } from '../../context/AuthProvider';
 
 export default function LoginScreen() {
  const [email, setEmail] = useState('');
  const [password, setPassword] = useState('');
  const [errors, setErrors] = useState({});
-
  const router = useRouter();
 
  const validate = () => {
@@ -45,7 +45,7 @@ export default function LoginScreen() {
   try {
     await signInWithEmailAndPassword(auth, email.trim(), password);
     Alert.alert('Success', 'Logged in!');
-    router.replace('(home)/home');
+    router.replace('/(tabs)/(home)');
   } catch (error) {
     console.log('Firebase error:', error.code);
     const newErrors = {};
@@ -53,9 +53,9 @@ export default function LoginScreen() {
     if (error.code === 'auth/invalid-credential') {
       newErrors.firebase = 'Invalid email or password';
     } else if (error.code === 'auth/user-not-found') {
-      newErrors.firebase === 'User not found';
+      newErrors.firebase = 'User not found';
     } else if (error.code === 'auth/wrong-password') {
-      newErrors.firebase === 'Invalid password';
+      newErrors.firebase = 'Invalid password';
     } else if (error.code === 'auth/invalid-email') {
       newErrors.email = 'Invalid email address';
     } else if (error.code === 'auth/network-request-failed') {

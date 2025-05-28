@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../lib/firebaseConfig';
+import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../lib/firebaseConfig';
 
 export default function SignUpScreen() {
    const [firstName, setFirstName] = useState('');
@@ -42,7 +42,7 @@ const handleSignup = async () => {
    try {
        await createUserWithEmailAndPassword(auth, email.trim(), password);
        Alert.alert('Success', 'Account created!');
-       router.replace('(home)/home');
+       router.replace('/(tabs)/(home)');
    } catch (error) {
     const newErrors = {};
 
