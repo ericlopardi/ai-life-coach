@@ -15,7 +15,7 @@ export const redirectIfAuthenticated = (user, loading, router, redirectPath = AU
     }
 }
 
-export const useAuthRedirect = (redirectPath = NO_AUTH_REDIRECT) => {
+export const usePublicRedirect = (redirectPath = NO_AUTH_REDIRECT) => {
     const { user, loading } = useContext(AuthContext);
     const router = useRouter();
 
@@ -26,7 +26,7 @@ export const useAuthRedirect = (redirectPath = NO_AUTH_REDIRECT) => {
     return { user, loading };
 };
 
-export const useAuthenticatedRedirect = (redirectPath = AUTH_REDIRECT) => {
+export const useProtectedRedirect = (redirectPath = AUTH_REDIRECT) => {
     const { user, loading } = useContext(AuthContext);
     const router = useRouter();
 

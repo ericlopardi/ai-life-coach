@@ -1,8 +1,8 @@
 import { Tabs } from 'expo-router';
-import { useAuthRedirect } from '../../lib/useAuthRedirect';
+import { usePublicRedirect } from '../../lib/usePublicRedirect';
 
 export default function TabLayout() {
-  useAuthRedirect();
+  usePublicRedirect();
   
   return (
     <Tabs screenOptions={{ headerShown: false }}>
