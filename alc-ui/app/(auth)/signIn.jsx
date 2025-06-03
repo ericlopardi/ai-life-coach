@@ -1,9 +1,8 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../lib/firebaseConfig'; 
-import { AuthContext } from '../../context/AuthProvider';
 
 export default function LoginScreen() {
  const [email, setEmail] = useState('');
@@ -44,7 +43,6 @@ export default function LoginScreen() {
 
   try {
     await signInWithEmailAndPassword(auth, email.trim(), password);
-    Alert.alert('Success', 'Logged in!');
   } catch (error) {
     console.log('Firebase error:', error.code);
     const newErrors = {};
