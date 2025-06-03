@@ -41,8 +41,6 @@ const handleSignup = async () => {
    
    try {
        await createUserWithEmailAndPassword(auth, email.trim(), password);
-       Alert.alert('Success', 'Account created!');
-       router.replace('/(tabs)/(home)');
    } catch (error) {
     const newErrors = {};
 

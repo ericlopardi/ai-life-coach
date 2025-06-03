@@ -45,7 +45,6 @@ export default function LoginScreen() {
   try {
     await signInWithEmailAndPassword(auth, email.trim(), password);
     Alert.alert('Success', 'Logged in!');
-    router.replace('/(tabs)/(home)');
   } catch (error) {
     console.log('Firebase error:', error.code);
     const newErrors = {};
