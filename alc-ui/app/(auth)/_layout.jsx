@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { useProtectedRedirect } from '../../lib/usePublicRedirect';
+import { useProtectedRedirect } from '../../lib/useAuthRedirect';
 import { AUTH_REDIRECT } from '../../constants/constants';
 
 export default function AuthLayout() {

@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { usePublicRedirect } from '../../lib/usePublicRedirect';
+import { usePublicRedirect } from '../../lib/useAuthRedirect';
 
 export default function TabLayout() {
   usePublicRedirect();
