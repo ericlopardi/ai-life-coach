@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
-import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../lib/firebaseConfig';
+import { AuthContext } from '../../context/AuthProvider';
 
 export default function SignUpScreen() {
    const [firstName, setFirstName] = useState('');
@@ -12,7 +11,7 @@ export default function SignUpScreen() {
    const [password, setPassword] = useState('');
    const [confirmPassword, setConfirmPassword] = useState('');
    const [errors, setErrors] = useState({});
-
+   const { register } = useContext(AuthContext);
    const router = useRouter();
 
 const validate = () => {
@@ -40,7 +39,8 @@ const handleSignup = async () => {
    if (!validate()) return; 
    
    try {
-       await createUserWithEmailAndPassword(auth, email.trim(), password);
+    await register(email.trim(), password, `${firstName} ${lastName}`);
+    console.log('User signed up and profile updated:', user);
    } catch (error) {
     const newErrors = {};
 
