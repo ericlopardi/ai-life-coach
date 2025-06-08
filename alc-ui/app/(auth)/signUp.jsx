@@ -35,11 +35,20 @@ const validate = () => {
    return Object.keys(newErrors).length === 0;
 };
 
+const capitalizeWords = (str) => {
+   return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+};
+
 const handleSignup = async () => {
    if (!validate()) return; 
    
    try {
-    await register(email.trim(), password, `${firstName} ${lastName}`);
+    const fullName = `${capitalizeWords(firstName.trim())} ${capitalizeWords(lastName.trim())}`;
+    await register(email.trim(), password, fullName);
     console.log('User signed up and profile updated:', user);
    } catch (error) {
     const newErrors = {};

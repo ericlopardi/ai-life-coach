@@ -16,7 +16,6 @@ export default function ProfileScreen() {
     }
   }
 
-  console.log('Avatar URI:', user?.photoURL || require('../../../assets/defaultProImg.png'));
   const defaultProImg = require('../../../assets/defaultProImg.png');
   return (
     <AppLayout noScroll>
