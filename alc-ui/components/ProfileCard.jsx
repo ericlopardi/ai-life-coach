@@ -18,7 +18,6 @@ export default function ProfileCard({
     const router = useRouter(); 
 
     const handleSettingsPress = () => {
-        // Navigate to settings screen
         router.push('/settings');
     }
 
@@ -49,14 +48,9 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: '#f4f7f3',
         width: '100%',
-        // height: '100%',
         borderRadius: 20,
         padding: 20,
         alignItems: 'center',
-        // shadowColor: '#000',
-        // shadowOffset: { width: 0, height: 2 },
-        // shadowOpacity: 0.1,
-        // shadowRadius: 6,
         elevation: 5,
         position: 'relative',
     },
