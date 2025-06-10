@@ -1,10 +1,10 @@
 import { Stack } from 'expo-router';
 
-export default function JournalLayout() {
+export default function ProfileLayout() {
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ title: 'Settings' }} />
-      <Stack.Screen name="profile" options={{ title: 'Profile' }} />
+      <Stack.Screen name="index" options={{ title: 'Profile' }} />
+      <Stack.Screen name="Settings" options={{ title: 'Settings' }} />
     </Stack>
   );
 }

@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../lib/firebaseConfig'; 
+import { AuthContext } from '../../context/AuthProvider';
 
 export default function LoginScreen() {
  const [email, setEmail] = useState('');
  const [password, setPassword] = useState('');
  const [errors, setErrors] = useState({});
+ const { login } = useContext(AuthContext);
  const router = useRouter();
 
  const validate = () => {
@@ -42,7 +42,8 @@ export default function LoginScreen() {
   if (!validate()) return;
 
   try {
-    await signInWithEmailAndPassword(auth, email.trim(), password);
+    await login(email.trim(), password);
+    console.log('User signed in successfully');
   } catch (error) {
     console.log('Firebase error:', error.code);
     const newErrors = {};

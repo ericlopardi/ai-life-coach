@@ -1,13 +1,13 @@
 import { createContext, useState, useEffect } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../lib/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const AuthContext = createContext();
 
-const SESSION_TIMEOUT = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+// const SESSION_TIMEOUT = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
 // const SESSION_TIMEOUT = 7 * 24 * 60 * 60 * 1000; // 7 days
-// const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
+const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -22,6 +22,39 @@ export const AuthProvider = ({ children }) => {
             console.error('Logout error:', error);
         }
     };
+
+    const login = async (email, password) => {
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            setUser({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+            });
+            await updateLastActivity();
+        } catch (error) {
+            console.error('Login error:', error);
+            throw error;
+        }
+    }
+
+    const register = async (email, password, displayName) => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            await updateProfile(user, { displayName });
+            setUser({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+            });
+            await updateLastActivity();
+        } catch (error) {
+            console.error('Registration error:', error);
+            throw error;
+        }
+    }
 
     const updateLastActivity = async () => {
         await AsyncStorage.setItem('lastActivity', Date.now().toString());
@@ -88,6 +121,8 @@ export const AuthProvider = ({ children }) => {
             user, 
             loading, 
             logout,
+            login,
+            register,
             updateLastActivity 
         }}>
             {children}
