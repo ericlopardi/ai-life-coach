@@ -1,55 +1,89 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useContext } from 'react';
 import { AuthContext } from '../../../context/AuthProvider';
+import { COLORS } from '../../../constants/colors';
+import { UI_CONSTANTS } from '../../../constants/constants';
+import { useRouter } from 'expo-router';
+
+const { MOOD_EMOJIS, DEFAULT_AFFIRMATION } = UI_CONSTANTS;
 
 export default function HomeScreen() {
   const { user } = useContext(AuthContext);
   const greeting = getTimeOfDay();
-  
-  const handleMoodSelect = (emoji) => {
-    console.log("Selected mood:", emoji);
-  };
+  // TODO: will be implemented later
+  const [selectedMood, setSelectedMood] = useState(null);
+  const router = useRouter();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.greeting}>{greeting}, {user?.displayName || 'Guest'}!</Text>
+      <Text style={styles.greeting}>
+        {greeting}, {user?.displayName || 'Guest'}!
+      </Text>
 
+      {/* Affirmation Card */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Today's Affirmation</Text>
-        <Text style={styles.cardContent}>You are capable of achieving great things.</Text>
+        <Text style={styles.cardContent}>{DEFAULT_AFFIRMATION}</Text>
       </View>
 
-      <View style={styles.card}>
+      {/* Mood Check-In Card */}
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.9}
+        onPress={() => router.push('/(mood)')}
+      >
         <Text style={styles.cardTitle}>Mood Check-In</Text>
         <View style={styles.emojiRow}>
-          {['🙁', '😕', '😐', '🙂', '😄'].map((emoji, index) => (
+          {MOOD_EMOJIS.map((emoji, index) => (
             <TouchableOpacity
               key={index}
-              onPress={() => handleMoodSelect(emoji)}
-              style={styles.emojiButton}
+              onPress={e => {
+                e.stopPropagation();
+                router.push({
+                  pathname: '/(mood)/new-entry',
+                  params: { emoji },
+                });
+              }}
+              style={[styles.emojiButton,]}
             >
               <Text style={styles.emoji}>{emoji}</Text>
             </TouchableOpacity>
           ))}
         </View>
-      </View>
+      </TouchableOpacity>
 
-
-      <View style={styles.card}>
+      {/* Journal Card */}
+      <TouchableOpacity
+        activeOpacity={0.9}
+        style={styles.card}
+        onPress={() => router.push('/(journal)')}
+      >
         <Text style={styles.cardTitle}>Journal</Text>
-        <Text style={styles.cardContent}>Today I made progress towards...</Text>
-        <TouchableOpacity style={styles.button}>
+        <Text style={styles.cardContent}>
+          Today I made progress towards...
+        </Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={e => {
+            e.stopPropagation();
+            router.push('/(journal)/new-entry');
+          }}
+        >
           <Text style={styles.buttonText}>Continue Writing</Text>
         </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.card}>
+      {/* Goals Card */}
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.8}
+        onPress={() => router.push('/(goals)')}
+      >
         <Text style={styles.cardTitle}>Goals</Text>
         <GoalProgress title="Workout 6x/week" progress={0.6} />
         <GoalProgress title="Financial Planning" progress={0.4} />
         <GoalProgress title="French Practice" progress={0.3} />
-    </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -58,8 +92,8 @@ function getTimeOfDay() {
   const hour = new Date().getHours();
   if (hour >= 3 && hour < 12) return 'Good Morning';
   if (hour >= 12 && hour < 18) return 'Good Afternoon';
-    return 'Good Evening';
-  }
+  return 'Good Evening';
+}
 
 function GoalProgress({ title, progress }) {
   return (
@@ -75,21 +109,16 @@ function GoalProgress({ title, progress }) {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: COLORS.background,
   },
   greeting: {
     fontSize: 26,
     fontWeight: '600',
-    color: '#222',
+    color: COLORS.textDark,
     padding: 10,
   },
-  progress: {
-    fontSize: 16,
-    color: '#444',
-    marginBottom: 20,
-  },
   card: {
-    backgroundColor: '#d6f0dd',
+    backgroundColor: COLORS.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
@@ -102,7 +131,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     fontSize: 16,
-    color: '#333',
+    color: COLORS.textLight,
   },
   emojiRow: {
     flexDirection: 'row',
@@ -112,8 +141,11 @@ const styles = StyleSheet.create({
   emoji: {
     fontSize: 26,
   },
+  emojiButton: {
+    padding: 6,
+  },
   button: {
-    backgroundColor: '#00674f',
+    backgroundColor: COLORS.primary,
     padding: 10,
     borderRadius: 6,
     marginTop: 12,
@@ -135,7 +167,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#00674f',
+    backgroundColor: COLORS.primary,
     borderRadius: 5,
   },
 });
