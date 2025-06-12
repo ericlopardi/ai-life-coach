@@ -2,12 +2,13 @@ import { Text, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Card from './Card';
 import { COLORS } from '../constants/colors';
+import { ROUTES } from '../constants/constants';
 
 export default function GoalsCard() {
   const router = useRouter();
 
   return (
-    <Card onPress={() => router.push('/(goals)')}>
+    <Card onPress={() => router.push(ROUTES.GOALS)}>
       <Text style={styles.title}>Goals</Text>
       <GoalProgress title="Workout 6x/week" progress={0.6} />
       <GoalProgress title="Financial Planning" progress={0.4} />

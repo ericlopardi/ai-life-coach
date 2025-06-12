@@ -2,19 +2,20 @@ import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import Card from './Card';
 import { COLORS } from '../constants/colors';
+import { ROUTES } from '../constants/constants';
 
 export default function JournalCard() {
   const router = useRouter();
 
   return (
-    <Card onPress={() => router.push('/(journal)')}>
+    <Card onPress={() => router.push(ROUTES.JOURNAL)}>
       <Text style={styles.title}>Journal</Text>
       <Text style={styles.subtitle}>Today I made progress towards...</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={e => {
           e.stopPropagation();
-          router.push('/(journal)/new-entry');
+          router.push(ROUTES.JOURNAL_NEW_ENTRY);
         }}
       >
         <Text style={styles.buttonText}>Continue Writing</Text>

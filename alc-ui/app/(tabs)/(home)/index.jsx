@@ -1,4 +1,3 @@
-import React, { useContext, useState } from 'react';
 import { Text, StyleSheet, ScrollView } from 'react-native';
 import { AuthContext } from '../../../context/AuthProvider';
 import { COLORS } from '../../../constants/colors';

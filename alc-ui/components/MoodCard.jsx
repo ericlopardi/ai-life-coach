@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import Card from './Card';
 import { useRouter } from 'expo-router';
-import { UI_CONSTANTS } from '../constants/constants';
+import { ROUTES, UI_CONSTANTS } from '../constants/constants';
 
 const { MOOD_EMOJIS } = UI_CONSTANTS;
 
@@ -9,7 +9,7 @@ export default function MoodCard() {
   const router = useRouter();
 
   return (
-    <Card onPress={() => router.push('/(mood)')}>
+    <Card onPress={() => router.push(ROUTES.MOOD)}>
       <Text style={styles.title}>Mood Check-In</Text>
       <View style={styles.emojiRow}>
         {MOOD_EMOJIS.map((emoji, index) => (
@@ -18,7 +18,7 @@ export default function MoodCard() {
             onPress={e => {
               e.stopPropagation();
               router.push({
-                pathname: '/(mood)/new-entry',
+                pathname: ROUTES.MOOD_NEW_ENTRY,
                 params: { emoji },
               });
             }}
