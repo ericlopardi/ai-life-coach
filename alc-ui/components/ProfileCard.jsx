@@ -35,7 +35,7 @@ export default function ProfileCard({
                 <StatBox label="Mood Check-ins" value={moodCount} />
             </View>
 
-            <AffirmationCard affirmation={affirmation} fontSize='12' />
+            <AffirmationCard affirmation={affirmation} />
 
             <Pressable style={styles.logoutButton} onPress={onLogout}>
                 <Text style={styles.logoutText}>Sign Out</Text>
