@@ -1,21 +1,21 @@
 import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthProvider';
 import { useRouter } from 'expo-router';
-import { NO_AUTH_REDIRECT, AUTH_REDIRECT } from '../constants/constants';
+import { ROUTES } from '../constants/constants';
 
-export const redirectIfUnauthenticated = (user, loading, router, redirectPath = NO_AUTH_REDIRECT) => {
+export const redirectIfUnauthenticated = (user, loading, router, redirectPath = ROUTES.NO_AUTH_REDIRECT) => {
     if (!loading && !user) {
         router.replace(redirectPath);
     }
 } 
 
-export const redirectIfAuthenticated = (user, loading, router, redirectPath = AUTH_REDIRECT) => {
+export const redirectIfAuthenticated = (user, loading, router, redirectPath = ROUTES.AUTH_REDIRECT) => {
     if (!loading && user) {
         router.replace(redirectPath);
     }
 }
 
-export const usePublicRedirect = (redirectPath = NO_AUTH_REDIRECT) => {
+export const usePublicRedirect = (redirectPath = ROUTES.NO_AUTH_REDIRECT) => {
     const { user, loading } = useContext(AuthContext);
     const router = useRouter();
 
@@ -26,7 +26,7 @@ export const usePublicRedirect = (redirectPath = NO_AUTH_REDIRECT) => {
     return { user, loading };
 };
 
-export const useProtectedRedirect = (redirectPath = AUTH_REDIRECT) => {
+export const useProtectedRedirect = (redirectPath = ROUTES.AUTH_REDIRECT) => {
     const { user, loading } = useContext(AuthContext);
     const router = useRouter();
 

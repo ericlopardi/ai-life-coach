@@ -6,6 +6,7 @@ import AffirmationCard from '../../../components/AffirmationCard';
 import MoodCard from '../../../components/MoodCard';
 import JournalCard from '../../../components/JournalCard';
 import GoalsCard from '../../../components/GoalsCard';
+import { useContext, useState } from 'react';
 
 const { DEFAULT_AFFIRMATION } = UI_CONSTANTS;
 
