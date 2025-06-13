@@ -16,5 +16,5 @@ export const ROUTES = {
 };
 
 export const GENERAL = {
-  AUTHORIZATION_TOKEN: 'AuthenticationToken'
+  AUTHORIZATION_TOKEN: 'AuthorizationToken'
 }
