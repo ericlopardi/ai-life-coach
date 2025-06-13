@@ -28,7 +28,7 @@ const getUserByFirebaseUid = async (firebaseUid) => {
     logInfo("Entered Service Layer: getUserByFirebaseUid");
     
     try {
-       return await User.findById(firebaseUid)
+       return await User.findById(firebaseUid);
     } catch (error) {
         logError("Error fetching user: ", error);
         throw error;
