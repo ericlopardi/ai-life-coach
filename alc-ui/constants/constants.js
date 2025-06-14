@@ -2,6 +2,7 @@ export const UI_CONSTANTS = {
     NO_AUTH_REDIRECT: '/(auth)/signIn',
     AUTH_REDIRECT: '/(tabs)/(home)',
     MOOD_EMOJIS: ['🙁', '😕', '😐', '🙂', '😄'],
+    MOOD_LABELS: ['Very Sad', 'Sad', 'Neutral', 'Happy', 'Very Happy'],
     DEFAULT_AFFIRMATION: "You are capable of achieving great things.",
 };
 

@@ -1,5 +1,6 @@
 // Constants for the server
 const LOCALHOST = 'http://localhost';
+const OPENAI_MODEL = "gpt-3.5-turbo"
 
 const STATUS_CODE = {
     HTTP_OK: "200",
@@ -11,5 +12,6 @@ const STATUS_CODE = {
 
 module.exports = {
     LOCALHOST,
+    OPENAI_MODEL,
     STATUS_CODE
 }

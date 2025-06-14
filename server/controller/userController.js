@@ -4,7 +4,6 @@ const userService = require("../service/userService.js");
 const statusCode = require("../utility/constants.js");
 
 router.post("/", async (req, res) => {
-
     try {
         const user = await userService.createUser(req);
 
