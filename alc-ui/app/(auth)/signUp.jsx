@@ -3,6 +3,9 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
 import { AuthContext } from '../../context/AuthProvider';
+import api from '../../lib/apiClient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GENERAL } from '../../constants/constants';
 
 export default function SignUpScreen() {
    const [firstName, setFirstName] = useState('');
@@ -48,10 +51,25 @@ const handleSignup = async () => {
    
    try {
     const fullName = `${capitalizeWords(firstName.trim())} ${capitalizeWords(lastName.trim())}`;
-    await register(email.trim(), password, fullName);
-    console.log('User signed up and profile updated:', user);
+    const firebaseUser = await register(email.trim(), password, fullName);
+    // console.log('Firebase User created:', firebaseUser);
+
+    const userData = {
+      firebaseUid: firebaseUser.uid,
+      email: email.trim(),
+      firstName: capitalizeWords(firstName.trim()),
+      lastName: capitalizeWords(lastName.trim()),
+    }
+    
+    const mongoResponse = await api.post('/users', userData);
+    // console.log('User created in MongoDB:', mongoResponse.data);
    } catch (error) {
     const newErrors = {};
+
+    if (error.response) {
+      console.error('API error status:', error.response.status);
+      console.error('API error data:', error.response.data);
+    }
 
     // Firebase error handling
     if (error.code === 'auth/email-already-in-use') {
