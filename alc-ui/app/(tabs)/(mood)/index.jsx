@@ -1,10 +1,9 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { COLORS } from '../../../constants/colors';
 import { UI_CONSTANTS } from '../../../constants/constants';
 import { useState } from 'react';
 import TextBoxInput from '../../../components/TextBoxInput';
 import DualButton from '../../../components/DualButton';
-import ResponseModal from '../../../components/ResponseModal';
 import apiClient from '../../../lib/apiClient';
 
 export default function MoodScreen() {
@@ -25,6 +24,8 @@ export default function MoodScreen() {
     }
 
     setIsLoading(true);
+
+    setMoodDescription(`You wrote:\n${moodDescription}`)
 
     try {
       const requestPayload = {
@@ -53,8 +54,13 @@ export default function MoodScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Mood Check-In</Text>
+      { /* Fixed Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Mood Check-In</Text>
+      </View>
 
+      { /* Scrollable Content */ }
+      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
       <Text style={{ color: COLORS.textDark, fontSize: 16, marginTop: 20 }}>
         How are you feeling today?
       </Text>
@@ -82,7 +88,18 @@ export default function MoodScreen() {
      <TextBoxInput
       value={moodDescription}
       onChangeText={setMoodDescription}
+      editable={!response}
      />
+
+     {response && (
+      <>
+        <TextBoxInput
+          value={`AI Coach Response:\n${response}`}
+          editable={false}
+          placeholder="AI response will appear here..."
+        />
+      </>
+     )}
 
      {isLoading ? (
       <View style={styles.loadingContainer}>
@@ -91,22 +108,27 @@ export default function MoodScreen() {
       </View>
      ) : (
       <DualButton
-        leftButtonText="Submit"
-        rightButtonText="History"
-        onLeftPress={handleSubmit}
+        leftButtonText={response ? "New Entry" : "Submit"}
+        rightButtonText={response ? "Save Entry" : "History"}
+        onLeftPress={response ? resetForm : handleSubmit}
         onRightPress={() => {
+          if (response) {
+            console.log('Save entry functionality not implemented yet');
+            resetForm();
+          }
           // Handle history navigation here
           console.log('Navigate to mood history');
         }}
       />
      )}
 
-      <ResponseModal
+      {/* <ResponseModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         response={response}
         resetForm={resetForm}
-      />  
+      />   */}
+      </ScrollView>
     </View>
   );
 }
@@ -114,14 +136,24 @@ export default function MoodScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: 'white',
+  },
+  header: {
+    paddingTop: 40,
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: 20,
     alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.textDark,
-    marginTop: -250,
   },
   emojiRow: {
     flexDirection: 'row',
