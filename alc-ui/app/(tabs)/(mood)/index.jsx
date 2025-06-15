@@ -1,13 +1,55 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { COLORS } from '../../../constants/colors';
 import { UI_CONSTANTS } from '../../../constants/constants';
 import { useState } from 'react';
 import TextBoxInput from '../../../components/TextBoxInput';
 import DualButton from '../../../components/DualButton';
+import ResponseModal from '../../../components/ResponseModal';
+import apiClient from '../../../lib/apiClient';
 
 export default function MoodScreen() {
   const [moodDescription, setMoodDescription] = useState('');
   const [moodEmoji, setMoodEmoji] = useState(null);
+  const [response, setResponse] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (moodEmoji === null || moodDescription.trim() === '') {
+      Alert.alert(
+        'Incomplete Submission',
+        'Please select a mood emoji and provide a description before submitting.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const requestPayload = {
+      moodDescription: moodDescription,
+      }
+      const response = await apiClient.post('/integrations/openai/generate-ai-mood-response', requestPayload);
+      setResponse(response.data.data.aiResponse);
+      setModalVisible(true);
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        'An error occurred while submitting your Check-in. Please try again later.',
+        [{ text: 'OK' }]
+      )
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setMoodDescription('');
+    setMoodEmoji(null);
+    setResponse(null);
+    setModalVisible(false);
+  }
 
   return (
     <View style={styles.container}>
@@ -42,34 +84,29 @@ export default function MoodScreen() {
       onChangeText={setMoodDescription}
      />
 
-    <DualButton
-      leftButtonText="Submit"
-      rightButtonText="History"
-      onLeftPress={() => {
-        // handle submit logic here
-        if(moodEmoji !== null && moodDescription.trim() !== '') {
-          console.log('Mood submitted:', {
-            emoji: UI_CONSTANTS.MOOD_LABELS[moodEmoji],
-            description: moodDescription,
-          });
-          setMoodDescription('');
-          setMoodEmoji(null);
-        } else {
-          Alert.alert(
-            'Incomplete Submission',
-            'Please select a mood emoji and provide a description before submitting.',
-            [{ text: 'OK' }]
-          )
-          setMoodDescription('');
-          setMoodEmoji(null);
-        }
-      }}
-      onRightPress={() => {
-        // Handle history navigation here
-        console.log('Navigate to mood history');
-      }}
-    />
-      
+     {isLoading ? (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>Generating response...</Text>
+      </View>
+     ) : (
+      <DualButton
+        leftButtonText="Submit"
+        rightButtonText="History"
+        onLeftPress={handleSubmit}
+        onRightPress={() => {
+          // Handle history navigation here
+          console.log('Navigate to mood history');
+        }}
+      />
+     )}
+
+      <ResponseModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        response={response}
+        resetForm={resetForm}
+      />  
     </View>
   );
 }
@@ -109,23 +146,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary || '#007bff',
     borderColor: COLORS.primary || '#007bff',
   },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '90%',
-    marginTop: 20,
+  loadingContainer: {
+    alignItems: 'center',
+    marginTop: 30,
   },
-  button: {
-    backgroundColor: "#dddddd",
-    padding: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-    width: '45%',
-    borderColor: 'black'
-  },
-  buttonText: {
-    color: 'black',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
+  loadingText: {
+    marginTop: 10,
+    color: COLORS.textDark,
+    fontSize: 16,
+  }
 });
