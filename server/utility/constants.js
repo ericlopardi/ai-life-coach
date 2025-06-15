@@ -1,6 +1,11 @@
 // Constants for the server
 const LOCALHOST = 'http://localhost';
 
+const OPENAI_CONFIG = {
+    OPENAI_MODEL: "gpt-3.5-turbo",
+    OPENAI_INSTRUCTIONS: "Provide a final and complete answer the following mood description. Do not ask any questions or invite further dialogue."
+}
+
 const STATUS_CODE = {
     HTTP_OK: "200",
     HTTP_CREATED: "201",
@@ -11,5 +16,6 @@ const STATUS_CODE = {
 
 module.exports = {
     LOCALHOST,
+    OPENAI_CONFIG,
     STATUS_CODE
 }
