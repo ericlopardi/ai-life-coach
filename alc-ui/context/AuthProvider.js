@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../lib/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GENERAL } from '../constants/constants';
 
 export const AuthContext = createContext();
 
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await signOut(auth);
             await AsyncStorage.removeItem('lastActivity');
+            await AsyncStorage.removeItem(GENERAL.AUTHORIZATION_TOKEN);
             setUser(null);
         } catch (error) {
             console.error('Logout error:', error);
@@ -27,12 +29,16 @@ export const AuthProvider = ({ children }) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+            console.log('User:', JSON.stringify(user, null, 2));
             setUser({
                 uid: user.uid,
                 email: user.email,
                 displayName: user.displayName,
             });
+            const idToken = await user.getIdToken();
+            await AsyncStorage.setItem(GENERAL.AUTHORIZATION_TOKEN, idToken);
             await updateLastActivity();
+            return user
         } catch (error) {
             console.error('Login error:', error);
             throw error;
@@ -49,7 +55,11 @@ export const AuthProvider = ({ children }) => {
                 email: user.email,
                 displayName: user.displayName,
             });
+            const idToken = await user.getIdToken();
+            await AsyncStorage.setItem(GENERAL.AUTHORIZATION_TOKEN, idToken);
+            console.log('User:', JSON.stringify(user, null, 2));
             await updateLastActivity();
+            return user
         } catch (error) {
             console.error('Registration error:', error);
             throw error;

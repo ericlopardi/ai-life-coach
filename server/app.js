@@ -21,6 +21,7 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(morgan("dev")); // Log HTTP requests in development mode
 
 // Controller Routes
-app.use("/auth", require("./controller/authController.js"));
+app.use("/users", require("./controller/userController.js"));
+app.use("/integrations/openai", require("./controller/openAIController.js"));
 
 module.exports = app;
