@@ -3,6 +3,7 @@ const router = express.Router();
 const openAIService = require("../service/openAIService.js");
 const constants = require("../utility/constants.js")
 
+// TODO: Need to protect route below with auth middleware
 router.post("/generate-ai-mood-response", async (req, res) => {
     try {
         if (req.body.moodDescription.trim() === '' || !req.body.moodDescription) {
