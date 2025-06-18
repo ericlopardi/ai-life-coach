@@ -1,6 +1,4 @@
 export const UI_CONSTANTS = {
-    PUBLIC_REDIRECT: '/(auth)/signIn',
-    PROTECTED_REDIRECT: '/(tabs)/(home)',
     MOOD_EMOJIS: ['🙁', '😕', '😐', '🙂', '😄'],
     MOOD_LABELS: ['Very Sad', 'Sad', 'Neutral', 'Happy', 'Very Happy'],
     DEFAULT_AFFIRMATION: "You are capable of achieving great things.",

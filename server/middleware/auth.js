@@ -15,7 +15,7 @@ const verifyFirebaseToken = async (req, res, next) => {
         const authHeader = req.headers.authorization;
 
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).send({
+            return res.status(constants.STATUS_CODE.HTTP_UNAUTHORIZED).send({
                 message: "Unauthorized - No token provided",
                 statusCode: constants.STATUS_CODE.HTTP_UNAUTHORIZED
             });
@@ -34,7 +34,7 @@ const verifyFirebaseToken = async (req, res, next) => {
         next()
     } catch (error) {
         logError('Token verification failed:', error.message);
-        return res.status(401).send({
+        return res.status(constants.STATUS_CODE.HTTP_UNAUTHORIZED).send({
             message: "Unauthorized - Invalid token",
             statusCode: constants.STATUS_CODE.HTTP_UNAUTHORIZED
         });

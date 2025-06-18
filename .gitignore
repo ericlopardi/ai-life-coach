@@ -14,5 +14,5 @@
 # Ignores Documents directory
 Documents/
 
-# Ignores server docs sirectory
+# Ignores server docs directory
 server/docs/
