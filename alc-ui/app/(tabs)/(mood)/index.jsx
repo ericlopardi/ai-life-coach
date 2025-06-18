@@ -11,7 +11,7 @@ export default function MoodScreen() {
   const [moodDescription, setMoodDescription] = useState('');
   const [moodEmoji, setMoodEmoji] = useState(null);
   const [response, setResponse] = useState(null);
-   const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
 
   const handleSubmit = async () => {
