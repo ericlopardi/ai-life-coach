@@ -3,6 +3,7 @@ const router = express.Router();
 const userService = require("../service/userService.js");
 const constants = require("../utility/constants.js");
 const { verifyFirebaseToken } = require("../middleware/auth.js");
+const { logInfo, logError} = require("../utility/logger.js");
 
 router.post("/", async (req, res) => {
     try {
@@ -30,6 +31,7 @@ router.get("/:firebaseUid", async (req, res) => {
         const user = await userService.getUserByFirebaseUid(req.params.firebaseUid);
 
         if (!user) {
+            logError("User not found");
             return res.status(constants.STATUS_CODE.HTTP_NOT_FOUND).send({
                 message: "User not found",
                 statusCode: constants.STATUS_CODE.HTTP_NOT_FOUND
@@ -42,6 +44,7 @@ router.get("/:firebaseUid", async (req, res) => {
             data: user
         });
     } catch (error) {
+        logError("Internal Server Error: " + error.message);
         return res.status(constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR).send({
             message: "Internal Server Error",
             statusCode: constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR,
@@ -55,29 +58,36 @@ router.put("/:firebaseUid/new-mood-entry", verifyFirebaseToken, async (req, res)
     const moodEntry = req.body;
 
     try {
-        if (req.user.uid !== userId) {
-            return res.status(constants.STATUS_CODE.HTTP_FORBIDDEN).send({
-                message: "Forbidden - Cannot modify other user's data",
-                statusCode: constants.STATUS_CODE.HTTP_FORBIDDEN
-            });
-        }
 
         if (!userId) {
+            logError("No Firebase UID found");
             return res.status(constants.STATUS_CODE.HTTP_BAD_REQUEST).send({
                 message: "No Firebase UID found",
                 statusCode: constants.STATUS_CODE.HTTP_BAD_REQUEST
             })
         }
 
+        if (req.user.uid !== userId) {
+            logError("Firebase User ID sent from Client does not match the User ID specified for modification");
+            return res.status(constants.STATUS_CODE.HTTP_FORBIDDEN).send({
+                message: "Forbidden - Cannot modify other user's data",
+                statusCode: constants.STATUS_CODE.HTTP_FORBIDDEN
+            });
+        }
+
+
         if (!moodEntry) {
+            logError("No user input found for new mood entry");
             return res.status(constants.STATUS_CODE.HTTP_BAD_REQUEST).send({
                 message: "No Mood Entry found",
                 statusCode: constants.STATUS_CODE.HTTP_BAD_REQUEST
             })
         }
+
         const user = await userService.insertNewMoodEntry(userId, moodEntry)
 
         if (!user) {
+            logError("No user found when attempting to insert new mood entry");
             return res.status(constants.STATUS_CODE.HTTP_NOT_FOUND).send({
                 message: "User not found",
                 statusCode: constants.STATUS_CODE.HTTP_NOT_FOUND
@@ -90,6 +100,7 @@ router.put("/:firebaseUid/new-mood-entry", verifyFirebaseToken, async (req, res)
             data: user
         })
     } catch (error) {
+        logError("Internal Server Error: " + error.message);
         return res.status(constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR).send({
             message: "Internal Server Error",
             statusCode: constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR,

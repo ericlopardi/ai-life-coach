@@ -3,10 +3,12 @@ const router = express.Router();
 const openAIService = require("../service/openAIService.js");
 const constants = require("../utility/constants.js");
 const { verifyFirebaseToken } = require("../middleware/auth.js");
+const { logError, logInfo } = require("../utility/logger.js");
 
 router.post("/generate-response", verifyFirebaseToken, async (req, res) => {
     try {
         if (req.body.userInput.trim() === '' || !req.body.userInput) {
+            logError("No user input found in Client request");
             return res.status(constants.STATUS_CODE.HTTP_BAD_REQUEST).send({
                 message: 'Bad Request - User Input is required',
                 statusCode: constants.STATUS_CODE.HTTP_BAD_REQUEST
@@ -25,6 +27,7 @@ router.post("/generate-response", verifyFirebaseToken, async (req, res) => {
             }
         })
     } catch (error) {
+        logError("Internal Server Error: " + error.message);
         return res.status(constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR).send({
             message: 'Internal Server Error',
             statusCode: constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR,
