@@ -8,7 +8,7 @@ const createMoodResponse = async (req) => {
     try {
         const requestPayload = {
             model: constants.OPENAI_CONFIG.OPENAI_MODEL,
-            input: req.body.moodDescription,
+            input: req.body.userInput,
             temperature: 0.7,
             instructions: constants.OPENAI_CONFIG.OPENAI_INSTRUCTIONS
         }

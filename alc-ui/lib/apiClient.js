@@ -57,6 +57,7 @@ const api = {
         return apiClient.delete(endpoint, config);
     },
 
+    // PUT request
     put: (endpoint, data = {}, config = {}) => {
         return apiClient.put(endpoint, data, config);
     }

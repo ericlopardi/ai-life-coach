@@ -11,8 +11,7 @@ export default function MoodScreen() {
   const [moodDescription, setMoodDescription] = useState('');
   const [moodEmoji, setMoodEmoji] = useState(null);
   const [response, setResponse] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
 
   const handleSubmit = async () => {
@@ -31,12 +30,11 @@ export default function MoodScreen() {
 
     try {
       const requestPayload = {
-      moodDescription: moodDescription,
+      userInput: moodDescription,
       }
-      const response = await apiClient.post('/integrations/openai/generate-ai-mood-response', requestPayload);
+      const response = await apiClient.post('/integrations/openai/generate-response', requestPayload);
       setResponse(response.data.data.aiResponse);
-      setModalVisible(true);
-    } catch (error) {
+     } catch (error) {
       Alert.alert(
         'Error',
         'An error occurred while submitting your Check-in. Please try again later.',
@@ -83,7 +81,6 @@ export default function MoodScreen() {
     setMoodDescription('');
     setMoodEmoji(null);
     setResponse(null);
-    setModalVisible(false);
   }
 
   return (
@@ -154,13 +151,6 @@ export default function MoodScreen() {
         }}
       />
      )}
-
-      {/* <ResponseModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        response={response}
-        resetForm={resetForm}
-      />   */}
       </ScrollView>
     </View>
   );

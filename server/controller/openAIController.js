@@ -1,23 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const openAIService = require("../service/openAIService.js");
-const constants = require("../utility/constants.js")
+const constants = require("../utility/constants.js");
+const { verifyFirebaseToken } = require("../middleware/auth.js");
 
-// TODO: Need to protect route below with auth middleware
-router.post("/generate-ai-mood-response", async (req, res) => {
+router.post("/generate-response", verifyFirebaseToken, async (req, res) => {
     try {
-        if (req.body.moodDescription.trim() === '' || !req.body.moodDescription) {
-            return res.status(400).send({
-                message: 'Bad Request - Mood Description is required',
+        if (req.body.userInput.trim() === '' || !req.body.userInput) {
+            return res.status(constants.STATUS_CODE.HTTP_BAD_REQUEST).send({
+                message: 'Bad Request - User Input is required',
                 statusCode: constants.STATUS_CODE.HTTP_BAD_REQUEST
             })
         }
 
-        const moodResponse = await openAIService.createMoodResponse(req);
+        const aiResponse = await openAIService.createMoodResponse(req);
 
-        const aiResponseText = moodResponse.data.output[0].content[0].text;
+        const aiResponseText = aiResponse.data.output[0].content[0].text;
 
-        return res.status(201).send({
+        return res.status(constants.STATUS_CODE.HTTP_CREATED).send({
             message: 'AI Response generated successfully',
             statusCode: constants.STATUS_CODE.HTTP_CREATED,
             data: {
@@ -25,7 +25,7 @@ router.post("/generate-ai-mood-response", async (req, res) => {
             }
         })
     } catch (error) {
-        return res.status(500).send({
+        return res.status(constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR).send({
             message: 'Internal Server Error',
             statusCode: constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR,
             error: error.message
