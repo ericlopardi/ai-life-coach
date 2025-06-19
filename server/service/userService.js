@@ -35,4 +35,18 @@ const getUserByFirebaseUid = async (firebaseUid) => {
     }
 }
 
-module.exports = { createUser, getUserByFirebaseUid }
+const insertNewMoodEntry = async (userId, moodEntry) => {
+    logInfo("Entered Service Layer: insertNewMoodEntry");
+
+    try {
+        return await User.findByIdAndUpdate(
+            userId,
+            { $push: { checkIns: moodEntry }},
+            { new: true })
+    } catch (error) {
+        logError("Error creating a new mood entry: ", error.message);
+        throw error
+    }
+}
+
+module.exports = { createUser, getUserByFirebaseUid, insertNewMoodEntry }

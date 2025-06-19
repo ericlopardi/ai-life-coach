@@ -1,3 +1,5 @@
+// This file is not being used at this time, but can be levraged in the future for a modal to display.
+
 import { Modal, View, ScrollView, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../constants/colors';
 import DualButton from './DualButton';
@@ -24,10 +26,13 @@ export default function ResponseModal({ modalVisible, setModalVisible, response,
           <DualButton
             leftButtonText="New Entry"
             rightButtonText="Save Entry"
-            onLeftPress={resetForm}
+            onLeftPress={() => {
+              console.log('clicked left button');
+              resetForm();
+            }}
             onRightPress={() => {
               // TODO: Implement save entry functionality
-              console.log('Save entry functionality not implemented yet');
+              console.log('clicked right button');
               resetForm();
             }}
             />

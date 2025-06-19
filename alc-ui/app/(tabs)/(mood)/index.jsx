@@ -1,17 +1,18 @@
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { COLORS } from '../../../constants/colors';
 import { UI_CONSTANTS } from '../../../constants/constants';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import TextBoxInput from '../../../components/TextBoxInput';
 import DualButton from '../../../components/DualButton';
 import apiClient from '../../../lib/apiClient';
+import { AuthContext } from '../../../context/AuthProvider';
 
 export default function MoodScreen() {
   const [moodDescription, setMoodDescription] = useState('');
   const [moodEmoji, setMoodEmoji] = useState(null);
   const [response, setResponse] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const handleSubmit = async () => {
     if (moodEmoji === null || moodDescription.trim() === '') {
@@ -29,12 +30,11 @@ export default function MoodScreen() {
 
     try {
       const requestPayload = {
-      moodDescription: moodDescription,
+      userInput: moodDescription,
       }
-      const response = await apiClient.post('/integrations/openai/generate-ai-mood-response', requestPayload);
+      const response = await apiClient.post('/integrations/openai/generate-response', requestPayload);
       setResponse(response.data.data.aiResponse);
-      setModalVisible(true);
-    } catch (error) {
+     } catch (error) {
       Alert.alert(
         'Error',
         'An error occurred while submitting your Check-in. Please try again later.',
@@ -42,14 +42,45 @@ export default function MoodScreen() {
       )
     } finally {
       setIsLoading(false);
+      setMoodDescription(moodDescription);
     }
   };
+
+  const handleSaveEntry = async () => {
+    const requestPayload = {
+      mood: UI_CONSTANTS.MOOD_LABELS[moodEmoji],
+      checkInResponse: moodDescription,
+      aiResponse: response,
+    }
+
+    try {
+      const response = await apiClient.put(`/users/${user.uid}/new-mood-entry`, requestPayload);
+      if (response.status === 200) {
+        Alert.alert(
+          'Success',
+          'Your mood entry has been saved successfully.',
+          [{ text: 'OK', onPress: resetForm }]
+        );
+      } else {
+        Alert.alert(
+          'Error',
+          'Failed to save your mood entry. Please try again later.',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        'An error occurred while saving your mood entry. Please try again later.',
+        [{ text: 'OK' }]
+      );
+    }
+  }
 
   const resetForm = () => {
     setMoodDescription('');
     setMoodEmoji(null);
     setResponse(null);
-    setModalVisible(false);
   }
 
   return (
@@ -108,21 +139,13 @@ export default function MoodScreen() {
         onLeftPress={response ? resetForm : handleSubmit}
         onRightPress={() => {
           if (response) {
-            console.log('Save entry functionality not implemented yet');
-            resetForm();
+            handleSaveEntry();
           }
           // Handle history navigation here
           console.log('Navigate to mood history');
         }}
       />
      )}
-
-      {/* <ResponseModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        response={response}
-        resetForm={resetForm}
-      />   */}
       </ScrollView>
     </View>
   );
