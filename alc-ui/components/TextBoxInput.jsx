@@ -1,4 +1,5 @@
 import { TextInput } from "react-native";
+import { COLORS } from "../constants/colors";
 
 export default function TextBoxInput({ value, onChangeText, editable = true, placeholder = "Share your thoughts..." }) {
     return (
@@ -22,8 +23,8 @@ const styles = {
     textBoxInput: {
         height: 150,
         width: '90%',
-        borderColor: 'black',
-        borderWidth: 1,
+        borderColor: COLORS.primary,
+        borderWidth: 2,
         borderRadius: 5,
         paddingHorizontal: 10,
         backgroundColor: '#fff',
