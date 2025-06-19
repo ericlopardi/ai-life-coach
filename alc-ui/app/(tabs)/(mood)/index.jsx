@@ -17,7 +17,7 @@ export default function MoodScreen() {
     if (moodEmoji === null || moodDescription.trim() === '') {
       Alert.alert(
         'Incomplete Submission',
-        'Please select a mood emoji and provide a description before submitting.',
+        'Please select a mood emoji, and provide a mood description before submitting.',
         [{ text: 'OK' }]
       );
       return;
@@ -54,14 +54,9 @@ export default function MoodScreen() {
 
   return (
     <View style={styles.container}>
-      { /* Fixed Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Mood Check-In</Text>
-      </View>
-
       { /* Scrollable Content */ }
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-      <Text style={{ color: COLORS.textDark, fontSize: 16, marginTop: 20 }}>
+      <Text style={{ color: COLORS.textDark, fontSize: 18, fontWeight: 'bold', marginTop: 20 }}>
         How are you feeling today?
       </Text>
 
@@ -73,7 +68,7 @@ export default function MoodScreen() {
             styles.emojiButton,
             moodEmoji === index && styles.selectedEmojiButton
           ]}
-          onPress={() => setMoodEmoji(index)}
+          onPress={() => setMoodEmoji(prev => (prev === index ? null : index))}
           >
 
             <Text style={styles.emojiText}>{emoji}</Text>
@@ -81,7 +76,7 @@ export default function MoodScreen() {
         ))}
       </View>
 
-      <Text style={{ color: COLORS.textDark, fontSize: 16, marginTop: 20 }}>
+      <Text style={{ color: COLORS.textDark, fontSize: 18, fontWeight: 'bold', marginTop: 20 }}>
         Why are you feeling this way?
       </Text>
 
@@ -138,28 +133,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
-  header: {
-    paddingTop: 40,
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
   content: {
     flex: 1,
   },
   contentContainer: {
-    padding: 20,
+    padding: 7,
     alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: COLORS.textDark,
   },
   emojiRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 20,
-    gap: 2
+    gap: 5
   },
   emojiButton: {
     width: 60,
@@ -175,7 +160,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   selectedEmojiButton: {
-    backgroundColor: COLORS.primary || '#007bff',
+    backgroundColor: COLORS.card || '#007bff',
     borderColor: COLORS.primary || '#007bff',
   },
   loadingContainer: {

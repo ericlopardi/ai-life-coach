@@ -1,4 +1,5 @@
 import { Text, View, TouchableOpacity } from "react-native"
+import { COLORS } from '../constants/colors';
 
 export default function DualButton({ leftButtonText, rightButtonText, onLeftPress, onRightPress }) {
     return (
@@ -21,15 +22,15 @@ const styles = {
     marginTop: 20,
   },
   button: {
-    backgroundColor: "#dddddd",
+    backgroundColor: COLORS.primary,
     padding: 10,
     borderRadius: 5,
     borderWidth: 1,
     width: '45%',
-    borderColor: 'black'
+    borderColor: 'white'
   },
   buttonText: {
-    color: 'black',
+    color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
   },
