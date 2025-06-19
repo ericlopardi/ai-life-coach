@@ -1,17 +1,18 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { COLORS } from '../../../constants/colors';
 import { PROMPTS } from '../../../constants/prompts';
 import PromptCard from '../../../components/PromptCard';
 import TextBoxInput from '../../../components/TextBoxInput';
 import DualButton from '../../../components/DualButton';
+import { AuthContext } from '../../../context/AuthProvider';
 
 export default function JournalScreen() {
   const [promptIndex, setPromptIndex] = useState(() => Math.floor(Math.random() * PROMPTS.length));
   const [journalDescription, setJournalDescription] = useState('');
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const handleGeneratePrompt = () => {
     let newIndex;
@@ -22,7 +23,7 @@ export default function JournalScreen() {
   }
 
   const handleSubmit = async () => {
-    if (journalDescription.trim() === '') {
+    if (!journalDescription || journalDescription.trim() === '') {
       Alert.alert(
         'Incomplete Submission',
         'Please provide a journal entry before submitting.',
@@ -39,9 +40,9 @@ export default function JournalScreen() {
       const requestPayload = {
       journalDescription: journalDescription,
       }
-      const response = await apiClient.post('/integrations/openai/generate-ai-journal-response', requestPayload);
+      // changing to generate-ai-response for now
+      const response = await apiClient.post('/integrations/openai/generate-ai-response', requestPayload);
       setResponse(response.data.data.aiResponse);
-      setModalVisible(true);
     } catch (error) {
       Alert.alert(
         'Error',
@@ -56,7 +57,6 @@ export default function JournalScreen() {
   const resetForm = () => {
     setJournalDescription('');
     setResponse(null);
-    setModalVisible(false);
   }
   
   return (
