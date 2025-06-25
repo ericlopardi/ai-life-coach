@@ -23,6 +23,7 @@ export default function JournalScreen() {
   }
 
   const handleSubmit = async () => {
+    console.log("I am here 1");
     if (!journalDescription || journalDescription.trim() === '') {
       Alert.alert(
         'Incomplete Submission',
@@ -38,10 +39,10 @@ export default function JournalScreen() {
 
     try {
       const requestPayload = {
-      journalDescription: journalDescription,
+      userInput: journalDescription,
       }
-      // changing to generate-ai-response for now
-      const response = await apiClient.post('/integrations/openai/generate-ai-response', requestPayload);
+      const response = await apiClient.post('/integrations/openai/generate-response', requestPayload);
+      console.log("I am here 2");
       setResponse(response.data.data.aiResponse);
     } catch (error) {
       Alert.alert(
@@ -51,8 +52,39 @@ export default function JournalScreen() {
       )
     } finally {
       setIsLoading(false);
+      setJournalDescription(journalDescription);
     }
   };
+
+  const handleSaveEntry = async () => {
+    const requestPayload = {
+      journalResponse: journalDescription,
+      aiResponse: response,
+    }
+
+    try {
+      const response = await apiClient.put(`/users/${user.uid}/new-journal-entry`, requestPayload);
+      if (response.status === 200) {
+        Alert.alert(
+          'Success',
+          'Your journal entry has been saved successfully.',
+          [{ text: 'OK', onPress: resetForm }]
+        );
+      } else {
+        Alert.alert(
+          'Error',
+          'Failed to save your journal entry. Please try again later.',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        'An error occurred while saving your journal entry. Please try again later.',
+        [{ text: 'OK' }]
+      );
+    }
+  } 
 
   const resetForm = () => {
     setJournalDescription('');
