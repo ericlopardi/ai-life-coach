@@ -15,15 +15,26 @@ const apiClient = axios.create({
     },
 });
 
+let cachedToken = null;
+let tokenTimestamp = null;
+const TOKEN_CACHE_DURATION = 55 * 60 * 1000 // this is equivalent to 55 minutes
+
 // request interceptor to add authentication token to header
 apiClient.interceptors.request.use(
     async (config) => {
         try {
             const currentUser = auth.currentUser
             if (currentUser) {
-                const freshToken = await currentUser.getIdToken(true);
-                config.headers.Authorization = `Bearer ${freshToken}`
-                await AsyncStorage.setItem(GENERAL.AUTHORIZATION_TOKEN, freshToken)
+                const now = Date.now();
+                if (cachedToken && tokenTimestamp && (now - tokenTimestamp < TOKEN_CACHE_DURATION)) {
+                    config.headers.Authorization = `Bearer ${cachedToken}`;
+                } else {
+                    const freshToken = await currentUser.getIdToken(true);
+                    cachedToken = freshToken;
+                    tokenTimestamp = now;
+                    config.headers.Authorization = `Bearer ${freshToken}`
+                    await AsyncStorage.setItem(GENERAL.AUTHORIZATION_TOKEN, freshToken)
+                }
             }
         } catch (error) {
             console.error('Token refresh failed: ', error);
