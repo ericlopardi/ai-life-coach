@@ -4,6 +4,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GENERAL } from '../constants/constants';
 import axios from 'axios'
+import { auth } from './firebaseConfig';
 
 // creates base axios instance, set once here, and used everywhere
 const apiClient = axios.create({
@@ -17,9 +18,19 @@ const apiClient = axios.create({
 // request interceptor to add authentication token to header
 apiClient.interceptors.request.use(
     async (config) => {
-        const token = await AsyncStorage.getItem(GENERAL.AUTHORIZATION_TOKEN)
-        if (token) config.headers.Authorization = `Bearer ${token}`;
-
+        try {
+            const currentUser = auth.currentUser
+            if (currentUser) {
+                const freshToken = await currentUser.getIdToken(true);
+                config.headers.Authorization = `Bearer ${token}`
+                await AsyncStorage.setItem(GENERAL.AUTHORIZATION_TOKEN, freshToken)
+            }
+        } catch (error) {
+            console.error('Token refresh failed: ', error);
+            console.log('Attempting to use stored token...')
+            const token = await AsyncStorage.getItem(GENERAL.AUTHORIZATION_TOKEN);
+            if (token) config.headers.Authorization = `Bearer ${token}`;
+        }
         console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
         return config;
     },
