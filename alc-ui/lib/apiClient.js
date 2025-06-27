@@ -22,7 +22,7 @@ apiClient.interceptors.request.use(
             const currentUser = auth.currentUser
             if (currentUser) {
                 const freshToken = await currentUser.getIdToken(true);
-                config.headers.Authorization = `Bearer ${token}`
+                config.headers.Authorization = `Bearer ${freshToken}`
                 await AsyncStorage.setItem(GENERAL.AUTHORIZATION_TOKEN, freshToken)
             }
         } catch (error) {
