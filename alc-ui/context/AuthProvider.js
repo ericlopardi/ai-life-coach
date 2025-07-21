@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            console.log('User:', JSON.stringify(user, null, 2));
             setUser({
                 uid: user.uid,
                 email: user.email,
@@ -57,7 +56,6 @@ export const AuthProvider = ({ children }) => {
             });
             const idToken = await user.getIdToken();
             await AsyncStorage.setItem(GENERAL.AUTHORIZATION_TOKEN, idToken);
-            console.log('User:', JSON.stringify(user, null, 2));
             await updateLastActivity();
             return user
         } catch (error) {
