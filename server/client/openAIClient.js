@@ -1,8 +1,8 @@
 const { logInfo, logError } = require("../utility/logger")
 const axios = require("axios");
 
-const executeMoodResponseClient = async (requestPayload) => {
-    logInfo("Entered Client Layer: executeMoodResponseClient");
+const executeOpenAIResponseClient = async (requestPayload, entryType) => {
+    logInfo(`Entered Client Layer: executeOpenAIResponseClient for ${entryType}`);
 
     try {
         const response = await axios.post(
@@ -17,9 +17,9 @@ const executeMoodResponseClient = async (requestPayload) => {
         );
         return response;
     } catch (error) {
-        logError("OpenAI Responses API error: ", error);
+        logError(`OpenAI Responses API error for ${entryType}: `, error);
         throw error;
     }
-}
+};
 
-module.exports = { executeMoodResponseClient }
+module.exports = { executeOpenAIResponseClient }

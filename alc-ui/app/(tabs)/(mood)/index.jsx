@@ -26,11 +26,12 @@ export default function MoodScreen() {
 
     setIsLoading(true);
 
-    setMoodDescription(`You wrote:\n${moodDescription}`)
+    const formattedInput = (`You wrote:\n${moodDescription}`);
 
     try {
       const requestPayload = {
-      userInput: moodDescription,
+      userInput: formattedInput,
+      entryType: 'mood'
       }
       const response = await apiClient.post('/integrations/openai/generate-response', requestPayload);
       setResponse(response.data.data.aiResponse);
@@ -48,13 +49,14 @@ export default function MoodScreen() {
 
   const handleSaveEntry = async () => {
     const requestPayload = {
+      entryType: 'mood',
       mood: UI_CONSTANTS.MOOD_LABELS[moodEmoji],
       checkInResponse: moodDescription,
       aiResponse: response,
     }
 
     try {
-      const response = await apiClient.put(`/users/${user.uid}/new-mood-entry`, requestPayload);
+      const response = await apiClient.put(`/users/${user.uid}/new-entry/mood`, requestPayload);
       if (response.status === 200) {
         Alert.alert(
           'Success',

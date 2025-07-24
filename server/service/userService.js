@@ -35,18 +35,26 @@ const getUserByFirebaseUid = async (firebaseUid) => {
     }
 }
 
-const insertNewMoodEntry = async (userId, moodEntry) => {
-    logInfo("Entered Service Layer: insertNewMoodEntry");
+const insertNewUserEntry = async (userId, entryType, entryData) => {
+    logInfo(`Entered Service Layer: insertNewUserEntry for ${entryType}`);
+
+    const allowedEntryTypes = ['checkIns', 'journalEntries'];
+    if (!allowedEntryTypes.includes(entryType)) {
+        const errorMessage = `Invalid entry type: ${entryType}`;
+        logError(errorMessage);
+        throw new Error(errorMessage);
+    }
 
     try {
         return await User.findByIdAndUpdate(
             userId,
-            { $push: { checkIns: moodEntry }},
-            { new: true })
+            { $push: { [entryType]: entryData } },
+            { new: true }
+        );
     } catch (error) {
-        logError("Error creating a new mood entry: ", error.message);
-        throw error
+        logError(`Error inserting into ${entryType}: `, error.message);
+        throw error;
     }
-}
+};
 
-module.exports = { createUser, getUserByFirebaseUid, insertNewMoodEntry }
+module.exports = { createUser, getUserByFirebaseUid, insertNewUserEntry }

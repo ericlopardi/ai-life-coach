@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { useContext, useState } from 'react';
 import { COLORS } from '../../../constants/colors';
 import { PROMPTS } from '../../../constants/prompts';
 import PromptCard from '../../../components/PromptCard';
 import TextBoxInput from '../../../components/TextBoxInput';
 import DualButton from '../../../components/DualButton';
+import apiClient from '../../../lib/apiClient';
 import { AuthContext } from '../../../context/AuthProvider';
 
 export default function JournalScreen() {
@@ -23,7 +24,6 @@ export default function JournalScreen() {
   }
 
   const handleSubmit = async () => {
-    console.log("I am here 1");
     if (!journalDescription || journalDescription.trim() === '') {
       Alert.alert(
         'Incomplete Submission',
@@ -35,12 +35,13 @@ export default function JournalScreen() {
 
     setIsLoading(true);
 
-    setJournalDescription(`You wrote:\n${journalDescription}`)
+    const formattedInput = `You wrote:\n${journalDescription}`;
 
     try {
       const requestPayload = {
-      userInput: journalDescription,
-      }
+      userInput: formattedInput,
+      entryType: 'journal'
+      };
       const response = await apiClient.post('/integrations/openai/generate-response', requestPayload);
       console.log("I am here 2");
       setResponse(response.data.data.aiResponse);
@@ -58,12 +59,13 @@ export default function JournalScreen() {
 
   const handleSaveEntry = async () => {
     const requestPayload = {
-      journalResponse: journalDescription,
-      aiResponse: response,
+      entryType: 'journal',
+      journalEntryResponse: journalDescription,
+      aiPrompt: response,
     }
 
     try {
-      const response = await apiClient.put(`/users/${user.uid}/new-journal-entry`, requestPayload);
+      const response = await apiClient.put(`/users/${user.uid}/new-entry/journal`, requestPayload);
       if (response.status === 200) {
         Alert.alert(
           'Success',
@@ -123,8 +125,7 @@ export default function JournalScreen() {
           onLeftPress={response ? resetForm : handleSubmit}
           onRightPress={() => {
             if (response) {
-              console.log('Save entry functionality not implemented yet');
-              resetForm();
+              handleSaveEntry();
             }
             // Handle history navigation here
             console.log('Navigate to journal history');
