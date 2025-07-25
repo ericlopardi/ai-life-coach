@@ -156,7 +156,7 @@ router.get("/:firebaseUid/history/:type/", verifyFirebaseToken, async (req,res) 
         }
         const historicalData = await userService.getHistoricalData(userId, type, page, limit)
         if (!historicalData || historicalData.totalCount === 0) {
-            logInfo(`No historical data found for user ${userId} and type ${type}`);
+            logError(`No historical data found for user ${userId} and type ${type}`);
             return res.status(constants.STATUS_CODE.HTTP_NOT_FOUND).send({
                 message: "No historical data found for the specified criteria",
                 statusCode: constants.STATUS_CODE.HTTP_NOT_FOUND,
