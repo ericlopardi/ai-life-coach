@@ -122,7 +122,7 @@ router.put("/:firebaseUid/new-entry/:entryType", verifyFirebaseToken, async (req
     }
 });
 
-router.get("/:firebaseUid/history/:type/", async (req,res) => {
+router.get("/:firebaseUid/history/:type/", verifyFirebaseToken, async (req,res) => {
     const userId = req.params.firebaseUid;
     const type = req.params.type;
     const page = parseInt(req.query.page) || 1;
@@ -140,13 +140,13 @@ router.get("/:firebaseUid/history/:type/", async (req,res) => {
                 statusCode: constants.STATUS_CODE.HTTP_BAD_REQUEST
             }); 
         }
-        // if (req.user.uid !== userId) {
-        //     logError("Firebase User ID does not match request user ID");
-        //     return res.status(constants.STATUS_CODE.HTTP_FORBIDDEN).send({
-        //         message: "Forbidden - Cannot modify another user's data",
-        //         statusCode: constants.STATUS_CODE.HTTP_FORBIDDEN
-        //     });
-        // }
+        if (req.user.uid !== userId) {
+            logError("Firebase User ID does not match request user ID");
+            return res.status(constants.STATUS_CODE.HTTP_FORBIDDEN).send({
+                message: "Forbidden - Cannot modify another user's data",
+                statusCode: constants.STATUS_CODE.HTTP_FORBIDDEN
+            });
+        }
         if (!mappedType || mappedType == undefined) {
             logError(`Invalid type: ${type}`);
             return res.status(constants.STATUS_CODE.HTTP_BAD_REQUEST).send({
