@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { COLORS } from '../../../constants/colors';
 import { UI_CONSTANTS } from '../../../constants/constants';
+import { ENTRY_TYPES } from '../../../constants/constants';
 import { useContext, useState } from 'react';
 import TextBoxInput from '../../../components/TextBoxInput';
 import DualButton from '../../../components/DualButton';
@@ -26,11 +27,12 @@ export default function MoodScreen() {
 
     setIsLoading(true);
 
-    setMoodDescription(`You wrote:\n${moodDescription}`)
+    const formattedInput = (`You wrote:\n${moodDescription}`);
 
     try {
       const requestPayload = {
-      userInput: moodDescription,
+      userInput: formattedInput,
+      entryType: ENTRY_TYPES.MOOD
       }
       const response = await apiClient.post('/integrations/openai/generate-response', requestPayload);
       setResponse(response.data.data.aiResponse);
@@ -48,13 +50,14 @@ export default function MoodScreen() {
 
   const handleSaveEntry = async () => {
     const requestPayload = {
+      entryType: ENTRY_TYPES.MOOD,
       mood: UI_CONSTANTS.MOOD_LABELS[moodEmoji],
       checkInResponse: moodDescription,
       aiResponse: response,
     }
 
     try {
-      const response = await apiClient.put(`/users/${user.uid}/new-mood-entry`, requestPayload);
+      const response = await apiClient.put(`/users/${user.uid}/new-entry/mood`, requestPayload);
       if (response.status === 200) {
         Alert.alert(
           'Success',
@@ -111,21 +114,37 @@ export default function MoodScreen() {
         Why are you feeling this way?
       </Text>
 
-     <TextBoxInput
-      value={moodDescription}
-      onChangeText={setMoodDescription}
-      editable={!response}
-     />
-
-     {response && (
+    {!response ? (
+      <TextBoxInput
+        value={moodDescription}
+        onChangeText={setMoodDescription}
+        editable={true}
+        placeholder="Type your thoughts here..."
+      />
+    ) : (
       <>
+        <Text style={{ color: COLORS.textDark, fontSize: 16, marginTop: 20, fontWeight: '700' }}>
+          You wrote:
+        </Text>
         <TextBoxInput
-          value={`AI Coach Response:\n${response}`}
+          value={moodDescription}
+          editable={false}
+        />
+      </>
+    )}
+
+    {response && (
+      <>
+        <Text style={{ color: COLORS.textDark, fontSize: 16, marginTop: 20, fontWeight: '700' }}>
+          AI Coach Response:
+        </Text>
+        <TextBoxInput
+          value={response}
           editable={false}
           placeholder="AI response will appear here..."
         />
       </>
-     )}
+    )}
 
      {isLoading ? (
       <View style={styles.loadingContainer}>

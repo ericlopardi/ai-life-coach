@@ -8,7 +8,6 @@ const { logInfo, logError} = require("../utility/logger.js");
 router.post("/", async (req, res) => {
     try {
         const user = await userService.createUser(req);
-
         const userResponse = user.toObject();
         delete userResponse.__v; // This removes the MongoDB Document Versioning Key from the API Response
 
@@ -53,60 +52,74 @@ router.get("/:firebaseUid", async (req, res) => {
     } 
 });
 
-router.put("/:firebaseUid/new-mood-entry", verifyFirebaseToken, async (req, res) => {
+router.put("/:firebaseUid/new-entry/:entryType", verifyFirebaseToken, async (req, res) => {
     const userId = req.params.firebaseUid;
-    const moodEntry = req.body;
+    const entryTypeParam = req.params.entryType?.trim().toLowerCase();
+    const entryData = req.body;
+
+    const validEntryTypes = {
+        mood: "checkIns",
+        journal: "journalEntries"
+    };
+
+    const mappedField = validEntryTypes[entryTypeParam];
 
     try {
-
         if (!userId) {
-            logError("No Firebase UID found");
+            logError("No Firebase UID found in request");
             return res.status(constants.STATUS_CODE.HTTP_BAD_REQUEST).send({
-                message: "No Firebase UID found",
+                message: "No Firebase UID provided",
                 statusCode: constants.STATUS_CODE.HTTP_BAD_REQUEST
-            })
+            });
         }
 
         if (req.user.uid !== userId) {
-            logError("Firebase User ID sent from Client does not match the User ID specified for modification");
+            logError("Firebase User ID does not match request user ID");
             return res.status(constants.STATUS_CODE.HTTP_FORBIDDEN).send({
-                message: "Forbidden - Cannot modify other user's data",
+                message: "Forbidden - Cannot modify another user's data",
                 statusCode: constants.STATUS_CODE.HTTP_FORBIDDEN
             });
         }
 
-
-        if (!moodEntry) {
-            logError("No user input found for new mood entry");
+        if (!entryData || Object.keys(entryData).length === 0) {
+            logError("Empty request body for new entry");
             return res.status(constants.STATUS_CODE.HTTP_BAD_REQUEST).send({
-                message: "No Mood Entry found",
+                message: "No entry data provided",
                 statusCode: constants.STATUS_CODE.HTTP_BAD_REQUEST
-            })
+            });
         }
 
-        const user = await userService.insertNewMoodEntry(userId, moodEntry)
+        if (!mappedField) {
+            logError(`Invalid entry type: ${entryTypeParam}`);
+            return res.status(constants.STATUS_CODE.HTTP_BAD_REQUEST).send({
+                message: "Invalid entry type",
+                statusCode: constants.STATUS_CODE.HTTP_BAD_REQUEST
+            });
+        }
 
-        if (!user) {
-            logError("No user found when attempting to insert new mood entry");
+        const updatedUser = await userService.insertNewUserEntry(userId, mappedField, entryData);
+
+        if (!updatedUser) {
+            logError("User not found when inserting new entry");
             return res.status(constants.STATUS_CODE.HTTP_NOT_FOUND).send({
                 message: "User not found",
                 statusCode: constants.STATUS_CODE.HTTP_NOT_FOUND
-            })
+            });
         }
 
         return res.status(constants.STATUS_CODE.HTTP_OK).send({
-            message: "Mood Entry inserted successfully",
+            message: `${entryTypeParam.charAt(0).toUpperCase() + entryTypeParam.slice(1)} entry inserted successfully`,
             statusCode: constants.STATUS_CODE.HTTP_OK,
-            data: user
-        })
+            data: updatedUser
+        });
     } catch (error) {
         logError("Internal Server Error: " + error.message);
         return res.status(constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR).send({
             message: "Internal Server Error",
             statusCode: constants.STATUS_CODE.HTTP_INTERNAL_SERVER_ERROR,
             error: error.message
-        })
+        });
     }
-})
+});
 
 module.exports = router;

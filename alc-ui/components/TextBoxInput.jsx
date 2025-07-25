@@ -32,6 +32,6 @@ const styles = {
     },
     readOnlyInput: {
         backgroundColor: '#fff',
-        borderColor: 'black',
+        borderColor: COLORS.primary,
     }
 }
