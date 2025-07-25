@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Alert, ActivityIndicator, ScrollView } from 're
 import { useContext, useState } from 'react';
 import { COLORS } from '../../../constants/colors';
 import { PROMPTS } from '../../../constants/prompts';
+import { ENTRY_TYPES } from '../../../constants/constants';
 import PromptCard from '../../../components/PromptCard';
 import TextBoxInput from '../../../components/TextBoxInput';
 import DualButton from '../../../components/DualButton';
@@ -34,16 +35,14 @@ export default function JournalScreen() {
     }
 
     setIsLoading(true);
-
     const formattedInput = `You wrote:\n${journalDescription}`;
 
     try {
       const requestPayload = {
       userInput: formattedInput,
-      entryType: 'journal'
+      entryType: ENTRY_TYPES.JOURNAL
       };
       const response = await apiClient.post('/integrations/openai/generate-response', requestPayload);
-      console.log("I am here 2");
       setResponse(response.data.data.aiResponse);
     } catch (error) {
       Alert.alert(
@@ -59,7 +58,7 @@ export default function JournalScreen() {
 
   const handleSaveEntry = async () => {
     const requestPayload = {
-      entryType: 'journal',
+      entryType: ENTRY_TYPES.JOURNAL,
       journalEntryResponse: journalDescription,
       aiPrompt: response,
     }
@@ -99,20 +98,37 @@ export default function JournalScreen() {
         prompt={PROMPTS[promptIndex]} 
         onGeneratePress={handleGeneratePrompt} 
       />
-      <TextBoxInput
-        value={journalDescription}
-        onChangeText={setJournalDescription}
-        editable={!response}
-      />
-      {response && (
-        <>
-          <TextBoxInput
-            value={`AI Coach Response:\n${response}`}
-            editable={false}
-            placeholder="AI response will appear here..."
-          />
-        </>
-      )}
+      {!response ? (
+            <TextBoxInput
+              value={journalDescription}
+              onChangeText={setJournalDescription}
+              editable={true}
+              placeholder="Type your thoughts here..."
+            />
+          ) : (
+            <>
+              <Text style={{ color: COLORS.textDark, fontSize: 16, marginTop: 5, fontWeight: '700' }}>
+                You wrote:
+              </Text>
+              <TextBoxInput
+                value={journalDescription}
+                editable={false}
+              />
+            </>
+          )}
+      
+          {response && (
+            <>
+              <Text style={{ color: COLORS.textDark, fontSize: 16, marginTop: 10, fontWeight: '700' }}>
+                AI Coach Response:
+              </Text>
+              <TextBoxInput
+                value={response}
+                editable={false}
+                placeholder="AI response will appear here..."
+              />
+            </>
+          )}
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />

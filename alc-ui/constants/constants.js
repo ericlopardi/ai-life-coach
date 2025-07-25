@@ -16,4 +16,9 @@ export const ROUTES = {
 
 export const GENERAL = {
   AUTHORIZATION_TOKEN: 'AuthorizationToken'
-}
+};
+
+export const ENTRY_TYPES = {
+  MOOD: 'mood',
+  JOURNAL: 'journal'
+};

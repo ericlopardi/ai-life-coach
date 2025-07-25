@@ -5,11 +5,6 @@ const constants = require("../utility/constants.js");
 const { verifyFirebaseToken } = require("../middleware/auth.js");
 const { logError, logInfo } = require("../utility/logger.js");
 
-const responseGenerators = {
-    mood: openAIService.createMoodResponse,
-    journal: openAIService.createJournalResponse,
-};
-
 router.post("/generate-response", verifyFirebaseToken, async (req, res) => {
     const { userInput, entryType } = req.body;
 
