@@ -133,7 +133,7 @@ router.get("/:firebaseUid/history/:type/", verifyFirebaseToken, async (req,res) 
     }
     const mappedType = validTypes[req.params.type]
     try {
-        if (userId == "" || !userId) {
+        if (userId.trim() === '' || !userId) {
            logError("No Firebase UID found in request");
             return res.status(constants.STATUS_CODE.HTTP_BAD_REQUEST).send({
                 message: "No Firebase UID provided",
