@@ -160,14 +160,6 @@ router.get("/:firebaseUid/history/:type/", verifyFirebaseToken, async (req,res) 
             return res.status(constants.STATUS_CODE.HTTP_NOT_FOUND).send({
                 message: "No historical data found for the specified criteria",
                 statusCode: constants.STATUS_CODE.HTTP_NOT_FOUND,
-                data: [],
-                pagination: {
-                    currentPage: page,
-                    totalPages: 0,
-                    totalItems: 0,
-                    hasNextPage: false,
-                    hasPreviousPage: false
-                }
             });
         }
         return res.status(200).send({
