@@ -7,13 +7,23 @@ import TextBoxInput from '../../../components/TextBoxInput';
 import DualButton from '../../../components/DualButton';
 import apiClient from '../../../lib/apiClient';
 import { AuthContext } from '../../../context/AuthProvider';
+import { useLocalSearchParams } from 'expo-router';
+import { useEffect } from 'react';
 
 export default function MoodScreen() {
+  const { selectedEmojiIndex } = useLocalSearchParams();
   const [moodDescription, setMoodDescription] = useState('');
   const [moodEmoji, setMoodEmoji] = useState(null);
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
+  const params = useLocalSearchParams();
+
+  useEffect(() => {
+    if (params?.selectedEmojiIndex !== undefined) {
+      setMoodEmoji(Number(params.selectedEmojiIndex));
+      }
+    }, [params.selectedEmojiIndex]);
 
   const handleSubmit = async () => {
     if (moodEmoji === null || moodDescription.trim() === '') {

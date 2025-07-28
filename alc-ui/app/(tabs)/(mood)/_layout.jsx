@@ -4,6 +4,7 @@ export default function MoodLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ title: 'Mood' }} />
+      <Stack.Screen name="new-entry" options={{ title: 'Mood Entry' }} />
     </Stack>
   );
 }
