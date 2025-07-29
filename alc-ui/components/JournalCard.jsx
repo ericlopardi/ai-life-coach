@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import Card from './Card';
 import { COLORS } from '../constants/colors';
 import { ROUTES } from '../constants/constants';
-import { useContext } from 'react';
 import { useJournalPrompt } from '../context/JournalPromptContext';
 import { PROMPTS } from '../constants/prompts';
 

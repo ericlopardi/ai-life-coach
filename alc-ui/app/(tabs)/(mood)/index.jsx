@@ -11,7 +11,6 @@ import { useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 
 export default function MoodScreen() {
-  const { selectedEmojiIndex } = useLocalSearchParams();
   const [moodDescription, setMoodDescription] = useState('');
   const [moodEmoji, setMoodEmoji] = useState(null);
   const [response, setResponse] = useState(null);

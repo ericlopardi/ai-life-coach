@@ -13,7 +13,6 @@ const { DEFAULT_AFFIRMATION } = UI_CONSTANTS;
 export default function HomeScreen() {
   const { user } = useContext(AuthContext);
   const greeting = getTimeOfDay();
-  const [selectedMood, setSelectedMood] = useState(null);
   
   return (
     <ScrollView contentContainerStyle={styles.container}>
