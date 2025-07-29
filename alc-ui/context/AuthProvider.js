@@ -75,6 +75,7 @@ export const AuthProvider = ({ children }) => {
 
     const retrieveUserData = async (firebaseUid) => {
         const userData = await apiClient.get(`/users/${firebaseUid}`)
+        if (!userData) throw new Error("Unable to retrieve user data in MongoDB")
         return userData.data.data
     }
 
