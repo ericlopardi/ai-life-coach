@@ -3,6 +3,7 @@ import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWith
 import { auth } from '../lib/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GENERAL } from '../constants/constants';
+import apiClient from '../lib/apiClient'
 
 export const AuthContext = createContext();
 
@@ -28,16 +29,20 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            setUser({
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-            });
-            const idToken = await user.getIdToken();
+            const firebaseUser = userCredential.user;
+            const userData = await retrieveUserData(firebaseUser.uid)
+            const newUserData = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                displayName: firebaseUser.displayName,
+                journalEntriesTotal: userData.journalEntries?.length || 0,
+                moodEntriesTotal: userData.checkIns?.length || 0
+            };
+            setUser(newUserData);
+            const idToken = await firebaseUser.getIdToken();
             await AsyncStorage.setItem(GENERAL.AUTHORIZATION_TOKEN, idToken);
             await updateLastActivity();
-            return user
+            return firebaseUser
         } catch (error) {
             console.error('Login error:', error);
             throw error;
@@ -47,21 +52,30 @@ export const AuthProvider = ({ children }) => {
     const register = async (email, password, displayName) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            await updateProfile(user, { displayName });
-            setUser({
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-            });
-            const idToken = await user.getIdToken();
+            const firebaseUser = userCredential.user;
+            await updateProfile(firebaseUser, { displayName });
+            const userData = await retrieveUserData(firebaseUser.uid)
+            const newUserData = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                displayName: firebaseUser.displayName,
+                journalEntiresTotal: userData.journalEntries?.length || 0,
+                moodEntriesTotal: userData.checkIns?.length || 0 
+            };
+            setUser(newUserData);
+            const idToken = await firebaseUser.getIdToken();
             await AsyncStorage.setItem(GENERAL.AUTHORIZATION_TOKEN, idToken);
             await updateLastActivity();
-            return user
+            return firebaseUser
         } catch (error) {
             console.error('Registration error:', error);
             throw error;
         }
+    }
+
+    const retrieveUserData = async (firebaseUid) => {
+        const userData = await apiClient.get(`/users/${firebaseUid}`)
+        return userData.data.data
     }
 
     const updateLastActivity = async () => {

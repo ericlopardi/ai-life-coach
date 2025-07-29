@@ -4,8 +4,6 @@ import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
 import { AuthContext } from '../../context/AuthProvider';
 import api from '../../lib/apiClient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GENERAL } from '../../constants/constants';
 
 export default function SignUpScreen() {
    const [firstName, setFirstName] = useState('');
@@ -52,7 +50,6 @@ const handleSignup = async () => {
    try {
     const fullName = `${capitalizeWords(firstName.trim())} ${capitalizeWords(lastName.trim())}`;
     const firebaseUser = await register(email.trim(), password, fullName);
-    // console.log('Firebase User created:', firebaseUser);
 
     const userData = {
       firebaseUid: firebaseUser.uid,
@@ -62,7 +59,6 @@ const handleSignup = async () => {
     }
     
     const mongoResponse = await api.post('/users', userData);
-    // console.log('User created in MongoDB:', mongoResponse.data);
    } catch (error) {
     const newErrors = {};
 
