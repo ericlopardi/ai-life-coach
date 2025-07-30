@@ -24,10 +24,9 @@ export default function ProfileScreen() {
         name={user?.displayName || 'Guest'}
         email={user?.email || ''}
         avatarUri={user?.photoURL || defaultProImg}
-        // counts below should be fetched from your user data
-        journalCount={user?.journalCount || 0}
+        journalCount={user?.journalEntriesTotal || 0}
         goalsCount={user?.goalsCount || 0}
-        moodCount={user?.moodCount || 0}
+        moodCount={user?.moodEntriesTotal || 0}
         affirmation={'I am becoming the best version of myself'}
         onLogout={handleLogout}
       />
