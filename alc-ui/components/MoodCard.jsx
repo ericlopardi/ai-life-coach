@@ -5,8 +5,15 @@ import { ROUTES, UI_CONSTANTS } from '../constants/constants';
 
 const { MOOD_EMOJIS } = UI_CONSTANTS;
 
-export default function MoodCard() {
+export default function MoodCard({ onEmojiPress }) {
   const router = useRouter();
+
+  const handleEmojiPress = (index) => {
+    router.push({
+      pathname: '/(mood)',
+      params: { selectedEmojiIndex: index },
+    });
+  };
 
   return (
     <Card onPress={() => router.push(ROUTES.MOOD)}>
@@ -15,12 +22,9 @@ export default function MoodCard() {
         {MOOD_EMOJIS.map((emoji, index) => (
           <TouchableOpacity
             key={index}
-            onPress={e => {
+            onPress={(e) => {
               e.stopPropagation();
-              router.push({
-                pathname: ROUTES.MOOD_NEW_ENTRY,
-                params: { emoji },
-              });
+              handleEmojiPress(index);
             }}
             style={styles.emojiButton}
           >

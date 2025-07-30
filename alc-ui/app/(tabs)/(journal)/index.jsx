@@ -8,9 +8,10 @@ import TextBoxInput from '../../../components/TextBoxInput';
 import DualButton from '../../../components/DualButton';
 import apiClient from '../../../lib/apiClient';
 import { AuthContext } from '../../../context/AuthProvider';
+import { useJournalPrompt } from '../../../context/JournalPromptContext'
 
 export default function JournalScreen() {
-  const [promptIndex, setPromptIndex] = useState(() => Math.floor(Math.random() * PROMPTS.length));
+  const { promptIndex, setPromptIndex } = useJournalPrompt();
   const [journalDescription, setJournalDescription] = useState('');
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
