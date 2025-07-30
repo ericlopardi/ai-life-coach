@@ -57,4 +57,42 @@ const insertNewUserEntry = async (userId, entryType, entryData) => {
     }
 };
 
-module.exports = { createUser, getUserByFirebaseUid, insertNewUserEntry }
+const getHistoricalData = async(userId, type, page = 1, limit = 10) => {
+    logInfo(`Entered Service Layer: getHistoricalData for ${type}`);
+    const typeMapping = {
+        mood: "checkIns",
+        journal: "journalEntries"
+    }
+    const field = typeMapping[type];
+    const skip = (page - 1) * limit;
+    try {
+        const result = await User.aggregate([
+            { $match: { _id: userId } },
+            { $project: { [field]: 1 } },
+            { $unwind: `$${field}` },
+            { $sort: { [`${field}.createdAt`]: -1 } },
+            { $facet: {
+                data: [
+                    { $skip: skip },
+                    { $limit: limit }
+                ],
+                totalCount: [
+                    { $count: "count" }
+                ]
+            }}
+        ]);
+        const totalCount = result[0].totalCount[0]?.count || 0;
+        const data = result[0].data.map(item => item[field]);
+        return {
+            data,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: page
+        };
+    } catch (error) {
+        logError(`Error fetching historical data: `, error.message);
+        throw error;
+    }
+}
+
+module.exports = { createUser, getUserByFirebaseUid, insertNewUserEntry, getHistoricalData }
