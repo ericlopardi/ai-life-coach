@@ -11,7 +11,7 @@ const createUser = async (req) => {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             checkIns: [],
-            goals: [],
+            // goals: [],
             journalEntries: []
         };
 

@@ -25,7 +25,6 @@ export default function ProfileScreen() {
         email={user?.email || ''}
         avatarUri={user?.photoURL || defaultProImg}
         journalCount={user?.journalEntriesTotal || 0}
-        goalsCount={user?.goalsCount || 0}
         moodCount={user?.moodEntriesTotal || 0}
         affirmation={'I am becoming the best version of myself'}
         onLogout={handleLogout}
