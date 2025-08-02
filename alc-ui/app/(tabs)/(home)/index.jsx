@@ -1,17 +1,33 @@
 import { Text, StyleSheet, ScrollView } from 'react-native';
 import { AuthContext } from '../../../context/AuthProvider';
 import { COLORS } from '../../../constants/colors';
-import { UI_CONSTANTS } from '../../../constants/constants';
 import AffirmationCard from '../../../components/AffirmationCard';
 import MoodCard from '../../../components/MoodCard';
 import JournalCard from '../../../components/JournalCard';
 import { useContext, useState } from 'react';
-
+import { useContext, useState, useEffect } from 'react';
+import { getDailyAffirmation } from '../../../lib/affirmationUtils';
 const { DEFAULT_AFFIRMATION } = UI_CONSTANTS;
+
 
 export default function HomeScreen() {
   const { user } = useContext(AuthContext);
+  const [dailyAffirmation, setDailyAffirmation] = useState('');
   const greeting = getTimeOfDay();
+  
+  useEffect(() => {
+    // Set the daily affirmation when component mounts
+    setDailyAffirmation(getDailyAffirmation());
+    
+    // Set up interval to check for affirmation updates
+    // (useful if user keeps app open past 6 AM)
+    const interval = setInterval(() => {
+      const newAffirmation = getDailyAffirmation();
+      setDailyAffirmation(newAffirmation);
+    }, 60000); // Check every minute
+    
+    return () => clearInterval(interval);
+  }, []);
   
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -19,7 +35,7 @@ export default function HomeScreen() {
         {greeting}, {user?.displayName || 'Guest'}!
       </Text>
 
-      <AffirmationCard affirmation={DEFAULT_AFFIRMATION} />
+      <AffirmationCard affirmation={dailyAffirmation} />
       <MoodCard />
       <JournalCard />
     </ScrollView>
