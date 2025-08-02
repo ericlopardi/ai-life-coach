@@ -10,7 +10,6 @@ export default function ProfileCard({
     email,
     avatarUri,
     journalCount,
-    goalsCount,
     moodCount,
     affirmation,
     onLogout,
@@ -31,7 +30,6 @@ export default function ProfileCard({
 
             <View style={styles.statsRow}>
                 <StatBox label="Journal Entries" value={journalCount} />
-                <StatBox label="Goals Completed" value={goalsCount} />
                 <StatBox label="Mood Check-ins" value={moodCount} />
             </View>
 

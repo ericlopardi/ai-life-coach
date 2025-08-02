@@ -4,9 +4,11 @@ import { COLORS } from '../../../constants/colors';
 import AffirmationCard from '../../../components/AffirmationCard';
 import MoodCard from '../../../components/MoodCard';
 import JournalCard from '../../../components/JournalCard';
-import GoalsCard from '../../../components/GoalsCard';
+import { useContext, useState } from 'react';
 import { useContext, useState, useEffect } from 'react';
 import { getDailyAffirmation } from '../../../lib/affirmationUtils';
+const { DEFAULT_AFFIRMATION } = UI_CONSTANTS;
+
 
 export default function HomeScreen() {
   const { user } = useContext(AuthContext);
@@ -36,7 +38,6 @@ export default function HomeScreen() {
       <AffirmationCard affirmation={dailyAffirmation} />
       <MoodCard />
       <JournalCard />
-      <GoalsCard />
     </ScrollView>
   );
 }

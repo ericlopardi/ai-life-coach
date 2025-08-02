@@ -9,7 +9,6 @@ export default function TabLayout() {
       <Tabs.Screen name="(home)" />
       <Tabs.Screen name="(mood)" />
       <Tabs.Screen name="(journal)" />
-      <Tabs.Screen name="(goals)" />
       <Tabs.Screen name="(profile)" />
     </Tabs>
   );
